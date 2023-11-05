@@ -1,13 +1,20 @@
-FROM ghcr.io/graalvm/graalvm-ce:ol7-java17-22.3.1
+FROM graalvm/graalvm-community@sha256:ccfea31d993fb9df6a59dfe2cee8f2436cc76bbb81d0ebc9f22f7beeade9489c
+#FROM ghcr.io/graalvm/graalvm-community:23.0.2
+#FROM ghcr.io/graalvm/graalvm-community:17.0.9
 
 # Setup tools
 RUN yum update -y && yum install wget -y && yum install unzip -y && yum install patch -y
 
+# https://github.com/oracle/graalpython/releases/download/graal-23.1.1/graalpy-community-jvm-23.1.1-linux-aarch64.tar.gz
+# https://github.com/oracle/graalpython/releases/download/graal-23.1.1/graalpy-community-23.1.1-linux-aarch64.tar.gz
+# curl -fsSL -o /tmp/graalpy.tar.gz https://github.com/oracle/graalpython/releases/download/graal-23.1.1/graalpy-23.1.1-linux-aarch64.tar.gz
+# tar xfz /tmp/graalpy.tar.gz -C /tmp
 # Install graalpy
-RUN gu install python
-RUN graalpy -m venv project_matcher_venv
-RUN source project_matcher_venv/bin/activate
-RUN graalpy -m ginstall install numpy
+#RUN gu install python
+RUN graalpy -m venv project_matcher_venv \
+    && source project_matcher_venv/bin/activate \
+    && graalpy -m pip install --upgrade pip \
+    && graalpy -m ginstall install numpy
 
 # Install maven
 ARG MAVEN_VERSION=3.8.8
